@@ -1,0 +1,3 @@
+import { Brand } from "@/components/brand";
+import { signOut } from "../login/actions";
+export default function Unauthorised(){return <main className="grid min-h-screen place-items-center bg-[#091f3c] p-6"><section className="card w-full max-w-md p-8"><Brand/><div className="badge mt-10">Access restricted</div><h1 className="mt-4 text-3xl font-extrabold">Account not authorised</h1><p className="mt-3 text-sm leading-6 text-[#667085]">Your sign-in is valid, but this account does not have an active membership in The Redditrepreneur workspace.</p><form action={signOut} className="mt-8"><button className="button w-full" type="submit">Sign out</button></form></section></main>}
