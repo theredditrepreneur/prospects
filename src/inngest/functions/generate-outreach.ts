@@ -20,7 +20,7 @@ export const generateOutreach = inngest.createFunction({ id: "generate-outreach"
       const { data, error } = await admin.from("outreach_angles").insert({ organisation_id: organisationId, company_id: companyId, title: draft.title, genuine_observation: draft.genuine_observation, evidence: draft.evidence, source_urls: context.intelligence.source_urls || [], problem_hypothesis: draft.problem_hypothesis, value_hypothesis: draft.value_hypothesis, recommended_service: context.intelligence.recommended_service, suggested_offer: draft.suggested_offer, suggested_call_to_action: draft.suggested_call_to_action, confidence_level: draft.confidence_level, status: "draft", created_by: userId }).select("id").single();
       if (error) throw error; return data;
     });
-    const { error } = await admin.from("outreach_messages").update({ outreach_angle_id: angle.id, subject: draft.subject, body: draft.body, status: "draft", updated_at: new Date().toISOString() }).eq("id", messageId).eq("organisation_id", organisationId);
+    const { error } = await admin.from("outreach_messages").update({ outreach_angle_id: angle.id, subject: draft.subject_lines[0].subject, subject_options: draft.subject_lines, body: draft.body, generation_rationale: draft.response_rationale, status: "draft", updated_at: new Date().toISOString() }).eq("id", messageId).eq("organisation_id", organisationId);
     if (error) throw error;
     await Promise.all([
       admin.from("pipeline_opportunities").update({ stage: "draft_created", next_action: "Review outreach draft", updated_at: new Date().toISOString() }).eq("company_id", companyId),

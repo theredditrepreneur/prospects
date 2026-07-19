@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { founderOutreachPrompt, reviewOutreachBody } from "./prompts";
+import { founderOutreachPrompt, reviewOutreachBody, reviewSubjectOptions } from "./prompts";
 
 describe("founder outreach prompt", () => {
   it("requires one insight and a human founder voice", () => {
@@ -16,5 +16,15 @@ describe("founder outreach prompt", () => {
     const body = `Hi there,\n\nI've spent some time looking at the public conversation around COROS, and one pattern felt worth sharing. People aren't only discussing individual products; they're comparing the wider experience before deciding which ecosystem to trust.\n\nThat makes the conversation useful beyond customer feedback. It can show where confidence grows, where it breaks down and which questions repeatedly shape buying decisions.\n\nWe help companies organise those public conversations into evidence that leadership teams can actually use, without reducing them to a sentiment score.\n\nI'd be happy to share a few examples from what I found if that would be useful.\n\nBest,\nThe Founder\nThe Redditrepreneur`;
     expect(reviewOutreachBody(body, "A pattern in athlete trust").valid).toBe(true);
     expect(reviewOutreachBody(body, "COROS, athlete data and trust").valid).toBe(false);
+  });
+  it("requires five distinct ranked subjects under 50 characters", () => {
+    expect(reviewSubjectOptions([
+      { rank: 1, subject: "A pattern in athlete trust" },
+      { rank: 2, subject: "Something interesting about COROS" },
+      { rank: 3, subject: "One community observation" },
+      { rank: 4, subject: "How athletes compare ecosystems" },
+      { rank: 5, subject: "A thought on product trust" },
+    ])).toBe(true);
+    expect(reviewSubjectOptions([{ rank: 1, subject: "Quick question" }])).toBe(false);
   });
 });

@@ -14,7 +14,11 @@ export const founderOutreachPrompt = `You write personally on behalf of the Foun
 
 Write a complete, sendable email in British English, not an insight memo or research summary. It should feel like the founder genuinely spent time researching this specific company and found something useful to share. Be warm, natural, curious, thoughtful, professional and confident, but never corporate, robotic, overly formal or salesy.
 
-The subject must sound like a real person wrote it. Use 3–8 words, sentence case, and create gentle curiosity around the single insight. Do not use a list of keywords, a report title, “Introduction”, “Opportunity”, “Partnership”, “Quick question” or the company name followed by a comma.
+PRIMARY GOAL: optimise for a genuine reply. Do not optimise for opens, clicks, meetings, demos or conversion. Every sentence should build trust, offer something useful or create enough honest curiosity to make replying feel worthwhile.
+
+RESEARCH FIRST: analyse all approved evidence before writing. Look across the official website, products, news, careers, reviews and community sources supplied. Identify recurring themes, contradictions and patterns. Prioritise an insight over an isolated fact.
+
+Return exactly five distinct subject lines, ranked strongest to weakest. Each must be under 50 characters, sentence case and create gentle curiosity around the single insight. They must sound like a real person wrote them. Do not use a list of keywords, clickbait, emojis, ALL CAPS, a report title, “Introduction”, “Following up”, “Opportunity”, “Partnership”, “Quick question” or the company name followed by a comma.
 
 Choose ONE genuinely interesting, well-supported observation from the approved research. Build the entire email around that single insight. Do not dump facts, list products or summarise the research. Turn evidence into an implication: explain what the observation could mean and why it may matter.
 
@@ -38,8 +42,12 @@ Style:
 - Target 110–170 words; never exceed 200 words.
 - This is a draft. Never imply it has been sent.
 - The body must include the greeting and sign-off. Do not return commentary before or after the email.
+- Never ask for a meeting, demo, call or booking. Never include a booking link.
+- Create curiosity by sharing enough to make the insight useful without exhausting everything found.
 
-Before returning it, silently review and rewrite until it sounds human, founder-written and specific enough that the recipient would believe it was written for them. The objective is sincerity, not impressiveness.`;
+Also return a 2–3 sentence rationale explaining why the email is likely to earn a response and naming the single insight it uses. This rationale is internal review guidance and must not appear inside the email.
+
+Before returning it, silently ask: Would I reply? Does this sound human and founder-written? Is there one memorable insight? Is it free of generic sales language and AI patterns? Would I send it to a Fortune 500 CEO? Rewrite until every answer is yes. The objective is trust, sincerity and replies—not impressiveness.`;
 
 export function reviewOutreachBody(body: string, subject = "") {
   const lower = body.toLowerCase();
@@ -51,4 +59,10 @@ export function reviewOutreachBody(body: string, subject = "") {
   if (!subject.trim() || subject.trim().split(/\s+/).length > 8 || /^(introduction|opportunity|partnership|quick question)\b/i.test(subject.trim()) || /^[^,]{2,40},/.test(subject.trim())) issues.push("Rewrite the subject as a natural 3–8 word email subject, not a title or keyword list.");
   if (wordCount < 90) issues.push("Develop the email enough to explain why it is being sent.");
   return { valid: banned.length === 0 && wordCount <= 200 && issues.length === 0, banned, wordCount, issues };
+}
+
+export function reviewSubjectOptions(options: Array<{ rank: number; subject: string }>) {
+  const subjects = options.map(option => option.subject.trim());
+  const banned = /quick question|following up|opportunity|partnership/i;
+  return options.length === 5 && options.every((option, index) => option.rank === index + 1 && option.subject.length > 0 && option.subject.length < 50 && !banned.test(option.subject) && option.subject !== option.subject.toUpperCase()) && new Set(subjects.map(subject => subject.toLowerCase())).size === 5;
 }
