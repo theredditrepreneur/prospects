@@ -34,10 +34,9 @@ export async function createOutreachDraft(input: Record<string, unknown>) {
   });
   type Draft = { title: string; genuine_observation: string; evidence: string; problem_hypothesis: string; value_hypothesis: string; suggested_offer: string; suggested_call_to_action: string; subject: string; body: string; confidence_level: string };
   let draft = JSON.parse((await request(JSON.stringify(input))).output_text) as Draft;
-  const review = reviewOutreachBody(draft.body);
+  const review = reviewOutreachBody(draft.body, draft.subject);
   if (!review.valid) {
-    draft = JSON.parse((await request(JSON.stringify({ approved_research: input, draft_to_rewrite: draft, mandatory_corrections: { remove_phrases: review.banned, current_word_count: review.wordCount, maximum_words: 200, target_words: "110-170", instruction: "Rewrite the draft fully. Preserve only supported meaning and return a more natural founder-written email." } }))).output_text) as Draft;
+    draft = JSON.parse((await request(JSON.stringify({ approved_research: input, draft_to_rewrite: draft, mandatory_corrections: { remove_phrases: review.banned, fix_email_structure: review.issues, current_word_count: review.wordCount, maximum_words: 200, target_words: "110-170", instruction: "Rewrite the draft fully as a complete personal email. Preserve only supported meaning and return a natural founder-written subject, greeting, clear reason for writing, one insight, soft CTA and founder sign-off." } }))).output_text) as Draft;
   }
   return draft;
 }
-

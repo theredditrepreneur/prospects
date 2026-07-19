@@ -7,14 +7,15 @@ export const generateOutreach = inngest.createFunction({ id: "generate-outreach"
   const admin = createSupabaseAdminClient();
   try {
     const context = await step.run("load-approved-intelligence", async () => {
-      const [{ data: company }, { data: intelligence }] = await Promise.all([
+      const [{ data: company }, { data: intelligence }, { data: sender }] = await Promise.all([
         admin.from("companies").select("id,name,website_url,industry").eq("id", companyId).eq("organisation_id", organisationId).single(),
         admin.from("company_intelligence").select("*").eq("company_id", companyId).eq("organisation_id", organisationId).not("approved_at", "is", null).single(),
+        admin.from("profiles").select("name,email").eq("id", userId).maybeSingle(),
       ]);
       if (!company || !intelligence) throw new Error("Approved company intelligence was not found.");
-      return { company, intelligence };
+      return { company, intelligence, sender: { name: sender?.name || null, role: "Founder", company: "The Redditrepreneur" } };
     });
-    const draft = await step.run("write-founder-outreach", () => createOutreachDraft({ company: context.company, approved_intelligence: context.intelligence }));
+    const draft = await step.run("write-founder-outreach", () => createOutreachDraft({ company: context.company, approved_intelligence: context.intelligence, sender: context.sender, recipient: { first_name: null, instruction: "Use Hi there, because no verified contact has been selected." } }));
     const angle = await step.run("save-outreach-angle", async () => {
       const { data, error } = await admin.from("outreach_angles").insert({ organisation_id: organisationId, company_id: companyId, title: draft.title, genuine_observation: draft.genuine_observation, evidence: draft.evidence, source_urls: context.intelligence.source_urls || [], problem_hypothesis: draft.problem_hypothesis, value_hypothesis: draft.value_hypothesis, recommended_service: context.intelligence.recommended_service, suggested_offer: draft.suggested_offer, suggested_call_to_action: draft.suggested_call_to_action, confidence_level: draft.confidence_level, status: "draft", created_by: userId }).select("id").single();
       if (error) throw error; return data;
@@ -32,4 +33,3 @@ export const generateOutreach = inngest.createFunction({ id: "generate-outreach"
     throw error;
   }
 });
-
