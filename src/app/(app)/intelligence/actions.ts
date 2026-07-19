@@ -21,6 +21,17 @@ export async function startResearch(companyId: string) {
   revalidatePath("/intelligence"); revalidatePath("/pipeline"); redirect(`/intelligence?company=${companyId}`);
 }
 
+export async function retryResearch(runId: string, companyId: string) {
+  const { supabase, organisationId, role } = await getWorkspace();
+  requirePermission(role, "runResearch");
+  const { data: run } = await supabase.from("research_runs").select("id,status").eq("id", runId).eq("company_id", companyId).eq("organisation_id", organisationId).maybeSingle();
+  if (!run || !["queued", "failed"].includes(run.status)) throw new Error("This research job cannot be retried because it is already running or complete.");
+  await supabase.from("research_runs").update({ status: "queued", progress: 0, error_message: null, started_at: null, completed_at: null }).eq("id", runId);
+  await inngest.send({ name: "prospects/research.requested", data: { runId, companyId, organisationId } });
+  revalidatePath("/intelligence");
+  redirect(`/intelligence?company=${companyId}&retried=1`);
+}
+
 export async function approveIntelligence(intelligenceId: string, companyId: string) {
   const { supabase, user, organisationId, role } = await getWorkspace();
   requirePermission(role, "approveResearch");
@@ -48,4 +59,3 @@ export async function generateOutreach(companyId: string) {
   await supabase.from("activities").insert({ organisation_id: organisationId, company_id: companyId, user_id: user.id, activity_type: "outreach_draft_created", summary: "Outreach draft created — not sent" });
   revalidatePath("/outreach"); revalidatePath("/pipeline"); redirect(`/outreach/${message.id}`);
 }
-
