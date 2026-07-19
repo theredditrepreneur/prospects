@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { founderOutreachPrompt, reviewOutreachBody } from "./prompts";
 
 const researchSchema = {
   type: "object", additionalProperties: false,
@@ -26,11 +27,17 @@ const outreachSchema = { type: "object", additionalProperties: false, required: 
 
 export async function createOutreachDraft(input: Record<string, unknown>) {
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const response = await client.responses.create({
+  const request = (content: string) => client.responses.create({
     model: process.env.OPENAI_MODEL?.toLowerCase() || "gpt-5-mini",
-    input: [{ role: "system", content: "Write one concise evidence-led introductory B2B email in British English. Use only approved research supplied. Do not invent a contact name, compliment, urgency or claim. Keep the body below 170 words. Use a low-pressure call to action. This is a draft and must not imply it was sent." }, { role: "user", content: JSON.stringify(input) }],
+    input: [{ role: "system", content: founderOutreachPrompt }, { role: "user", content }],
     text: { format: { type: "json_schema", name: "outreach_draft", strict: true, schema: outreachSchema } },
   });
-  return JSON.parse(response.output_text) as { title: string; genuine_observation: string; evidence: string; problem_hypothesis: string; value_hypothesis: string; suggested_offer: string; suggested_call_to_action: string; subject: string; body: string; confidence_level: string };
+  type Draft = { title: string; genuine_observation: string; evidence: string; problem_hypothesis: string; value_hypothesis: string; suggested_offer: string; suggested_call_to_action: string; subject: string; body: string; confidence_level: string };
+  let draft = JSON.parse((await request(JSON.stringify(input))).output_text) as Draft;
+  const review = reviewOutreachBody(draft.body);
+  if (!review.valid) {
+    draft = JSON.parse((await request(JSON.stringify({ approved_research: input, draft_to_rewrite: draft, mandatory_corrections: { remove_phrases: review.banned, current_word_count: review.wordCount, maximum_words: 200, target_words: "110-170", instruction: "Rewrite the draft fully. Preserve only supported meaning and return a more natural founder-written email." } }))).output_text) as Draft;
+  }
+  return draft;
 }
 
