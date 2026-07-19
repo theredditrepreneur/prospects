@@ -1,0 +1,1 @@
+import { PlaceholderPage } from "@/components/placeholder-page";export default function Page(){return <PlaceholderPage title="Prospects" description="Review, approve and investigate companies without turning your intelligence operation into a generic CRM." action="Add company"/>}

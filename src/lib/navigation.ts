@@ -1,0 +1,4 @@
+import { LayoutDashboard, Search, Building2, Brain, Send, Columns3, ChartNoAxesCombined, Target, Users, Settings } from "lucide-react";
+export const navigation=[
+ ["Overview","/dashboard",LayoutDashboard],["Discover","/discover",Search],["Prospects","/prospects",Building2],["Intelligence","/intelligence",Brain],["Outreach","/outreach",Send],["Pipeline","/pipeline",Columns3],["Analytics","/analytics",ChartNoAxesCombined],["ICPs","/icps",Target],["Team","/team",Users],["Settings","/settings",Settings]
+] as const;

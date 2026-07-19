@@ -1,0 +1,1 @@
+import { PlaceholderPage } from "@/components/placeholder-page";export default function Page(){return <PlaceholderPage title="Analytics" description="Understand discovery, research, outreach and revenue performance. Drafts are always reported separately from messages marked as sent." action="Export report"/>}

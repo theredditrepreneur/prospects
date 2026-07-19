@@ -1,0 +1,1 @@
+import { PlaceholderPage } from "@/components/placeholder-page";export default function Page(){return <PlaceholderPage title="Ideal customer profiles" description="Define evidence, exclusions, buyer roles and service alignment before prospect discovery begins." action="Create ICP"/>}

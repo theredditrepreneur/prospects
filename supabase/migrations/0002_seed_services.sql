@@ -1,0 +1,5 @@
+-- Run after creating the initial The Redditrepreneur organisation; replace the placeholder UUID in a controlled setup script.
+-- Services are intentionally not inserted globally because every row must belong to an organisation.
+-- Recommended catalogue: Community Intelligence Audit (£349); Community Intelligence Retainer (from £995/month);
+-- Community Intelligence Workshop (£1,495); AI Authority Audit (£1,495); Reddit Authenticity and Risk Audit
+-- (configurable); Fractional Chief Community Intelligence Officer (£5,000/month).

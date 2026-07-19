@@ -1,0 +1,6 @@
+import { z } from "zod";
+export const scoreCategories=["icpFit","timing","communityNeed","commercialPotential","strategicFit","buyerAccessibility","dataConfidence"] as const;
+export const weightsSchema=z.object({icpFit:z.number().min(0).max(100),timing:z.number().min(0).max(100),communityNeed:z.number().min(0).max(100),commercialPotential:z.number().min(0).max(100),strategicFit:z.number().min(0).max(100),buyerAccessibility:z.number().min(0).max(100),dataConfidence:z.number().min(0).max(100)}).refine(v=>Object.values(v).reduce((a,b)=>a+b,0)===100,"Weights must total 100");
+export type ScoreWeights=z.infer<typeof weightsSchema>;export const defaultWeights:ScoreWeights={icpFit:25,timing:20,communityNeed:20,commercialPotential:15,strategicFit:10,buyerAccessibility:5,dataConfidence:5};
+export function calculateOpportunityScore(values:Record<(typeof scoreCategories)[number],number>,weights:ScoreWeights=defaultWeights){weightsSchema.parse(weights);const total=scoreCategories.reduce((sum,key)=>sum+(Math.max(0,Math.min(100,values[key]))*weights[key])/100,0);return Math.round(total)}
+export function scoreLabel(score:number){if(score>=90)return"Exceptional Opportunity";if(score>=75)return"High Opportunity";if(score>=60)return"Worth Exploring";if(score>=40)return"Low Priority";return"Poor Fit"}

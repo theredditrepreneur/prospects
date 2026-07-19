@@ -1,0 +1,1 @@
+import { PlaceholderPage } from "@/components/placeholder-page";export default function Page(){return <PlaceholderPage title="Outreach review" description="Create evidence-led angles and individually approve every message. This application contains no automatic sending path." action="Generate drafts"/>}

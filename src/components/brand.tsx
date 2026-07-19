@@ -1,0 +1,1 @@
+export function Brand(){return <div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-xl bg-[#f36c21] text-xl font-black text-white">R</div><div><div className="font-extrabold">Prospect Intelligence OS</div><div className="text-xs text-[#667085]">The Redditrepreneur Internal Operating System</div></div></div>}

@@ -1,0 +1,1 @@
+import { PlaceholderPage } from "@/components/placeholder-page";export default function Page(){return <PlaceholderPage title="Company intelligence" description="Trace verified facts, labelled inferences, known unknowns and Community Intelligence opportunities back to their sources." action="Review queue"/>}
