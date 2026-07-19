@@ -1,6 +1,6 @@
 import { createClient, type User } from "@supabase/supabase-js";
 
-function createAdminClient() {
+export function createSupabaseAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error("Supabase owner bootstrap is not configured.");
@@ -20,7 +20,7 @@ export async function bootstrapInitialOwner(user: User) {
   const expectedEmail = process.env.INITIAL_OWNER_EMAIL?.trim().toLowerCase();
   const email = user.email?.trim().toLowerCase();
   if (!expectedEmail || !email || email !== expectedEmail) return;
-  const admin = createAdminClient();
+  const admin = createSupabaseAdminClient();
   const name = String(user.user_metadata?.full_name || user.user_metadata?.name || email.split("@")[0]);
   const { error: profileError } = await admin.from("profiles").upsert({ id: user.id, auth_provider_id: user.id, name, email, avatar_url: user.user_metadata?.avatar_url ?? null, last_active_at: new Date().toISOString() });
   if (profileError) throw profileError;
