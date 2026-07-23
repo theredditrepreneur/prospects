@@ -63,7 +63,7 @@ export const discoverProspects = inngest.createFunction(
         } else if (!passesCompanyQualityGate(result.verification, context.threshold)) {
           rejected++;
           const v = result.verification;
-          const reason = v.rejection_reason || (!v.is_operating_business ? "The website did not verify an active operating business." : !v.is_commercial_organisation ? "The website did not verify a commercial organisation." : !v.has_identifiable_products_or_services ? "No clear product or service was verified." : !v.matches_icp ? "The company did not match the selected ICP." : !v.evidence.length ? "There was not enough evidence on the company website." : `ICP Match Score ${v.match_score} was below the ${context.threshold}+ threshold.`);
+          const reason = v.rejection_reason || (!v.is_operating_business ? "The website did not verify an active operating business." : !v.is_commercial_organisation ? "The website did not verify a commercial organisation." : !v.has_identifiable_products_or_services ? "No clear product or service was verified." : !v.matches_icp ? "The company did not match the selected ICP." : !v.evidence.length ? "There was not enough verified buying evidence on the company website." : `Buyer likelihood ${v.match_score} was below the ${context.threshold}+ opportunity threshold.`);
           await admin.from("discovery_candidates").update({ status: "rejected", company_name: v.company_name, match_score: v.match_score, rejection_reason: reason, evidence: v.evidence, updated_at: new Date().toISOString() }).eq("discovery_run_id", runId).eq("domain", candidate.domain);
         } else {
           const v = result.verification;
@@ -74,7 +74,7 @@ export const discoverProspects = inngest.createFunction(
           } else {
             companyKeys.add(companyKey);
             await admin.from("discovery_candidates").update({ status: "qualified", company_name: v.company_name, match_score: v.match_score, evidence: v.evidence }).eq("discovery_run_id", runId).eq("domain", candidate.domain);
-            qualified.push({ organisation_id: organisationId, name: v.company_name, domain: candidate.domain, website_url: result.page.url, industry: v.industry, description: v.description, headquarters: v.country, country: v.country, employee_range: v.employee_range, business_model: v.business_model, products: v.products, ideal_customers: [], technology_summary: null, source: "company_discovery", source_urls: [result.page.url, candidate.sourceUrl], discovery_run_id: runId, status: "pending_approval", match_explanation: v.reason_it_matches, discovery_evidence: v.evidence.join(" · "), discovery_confidence: v.confidence, initial_icp_match_score: v.match_score, verification_evidence: v.evidence, verified_company: true, parent_company: v.parent_company });
+            qualified.push({ organisation_id: organisationId, name: v.company_name, domain: candidate.domain, website_url: result.page.url, industry: v.industry, description: v.description, headquarters: v.country, country: v.country, employee_range: v.employee_range, business_model: v.business_model, products: v.products, ideal_customers: [], technology_summary: null, source: "company_discovery", source_urls: [result.page.url, candidate.sourceUrl], discovery_run_id: runId, status: "pending_approval", match_explanation: v.why_they_would_buy, discovery_evidence: v.evidence.join(" · "), discovery_confidence: v.confidence, initial_icp_match_score: v.match_score, verification_evidence: v.evidence, verified_company: true, parent_company: v.parent_company });
           }
         }
         const progress = fresh.length ? Math.min(92, 20 + Math.round((checked / fresh.length) * 72)) : 92;
@@ -88,7 +88,7 @@ export const discoverProspects = inngest.createFunction(
         { organisation_id: organisationId, event_type: "firecrawl_page", quantity: checked, metadata: { run_id: runId } },
         { organisation_id: organisationId, event_type: "openai_request", quantity: checked, metadata: { run_id: runId, operation: "company_verification" } },
       ]);
-      await updateRun({ status: "completed", progress: 100, current_step: imported ? `Complete — ${imported} Potential Prospect${imported === 1 ? "" : "s"} found.` : "Complete — no candidates passed the quality gate.", companies_found: candidates.length, companies_imported: imported, candidates_verified: checked, candidates_rejected: rejected, completed_at: new Date().toISOString() });
+      await updateRun({ status: "completed", progress: 100, current_step: imported ? `Complete — ${imported} Potential Prospect${imported === 1 ? "" : "s"} found.` : "Complete — no candidates passed the opportunity threshold.", companies_found: candidates.length, companies_imported: imported, candidates_verified: checked, candidates_rejected: rejected, completed_at: new Date().toISOString() });
       return { candidate_domains: candidates.length, verified_prospects: imported, threshold: context.threshold };
     } catch (error) {
       await updateRun({ status: "failed", current_step: "Discovery stopped because of an error.", error_message: error instanceof Error ? error.message : "Company Discovery failed", completed_at: new Date().toISOString() });
