@@ -22,7 +22,7 @@ export const discoverProspects = inngest.createFunction(
         ]);
         if (icpError || !icp) throw new Error("ICP not found");
         if (orgError || !org) throw new Error("Organisation settings not found");
-        return { icp, threshold: org.discovery_match_threshold || 70 };
+        return { icp, threshold: org.discovery_match_threshold ?? 70 };
       });
 
       const tavilyKey = process.env.TAVILY_API_KEY;

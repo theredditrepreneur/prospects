@@ -33,11 +33,12 @@ export async function createOutreachDraft(input: Record<string, unknown>) {
     text: { format: { type: "json_schema", name: "outreach_draft", strict: true, schema: outreachSchema } },
   });
   type Draft = { title: string; genuine_observation: string; evidence: string; problem_hypothesis: string; value_hypothesis: string; suggested_offer: string; suggested_call_to_action: string; subject_lines: Array<{ rank: number; subject: string }>; body: string; response_rationale: string; confidence_level: string };
+  const companyName = String((input.company as Record<string, unknown> | undefined)?.name || "").trim();
   let draft = JSON.parse((await request(JSON.stringify(input))).output_text) as Draft;
-  const review = reviewOutreachBody(draft.body, draft.subject_lines?.[0]?.subject);
-  if (!review.valid || !reviewSubjectOptions(draft.subject_lines || [])) {
+  const review = reviewOutreachBody(draft.body, draft.subject_lines?.[0]?.subject, companyName);
+  if (!review.valid || !reviewSubjectOptions(draft.subject_lines || [], companyName)) {
     draft = JSON.parse((await request(JSON.stringify({ approved_research: input, draft_to_rewrite: draft, mandatory_corrections: { remove_phrases: review.banned, fix_email_structure: review.issues, subject_requirements: "Exactly five distinct ranked subjects, each under 50 characters and free of sales language", current_word_count: review.wordCount, maximum_words: 200, target_words: "110-170", instruction: "Rewrite fully. Return five subjects, a complete personal founder email designed to earn a reply, and a 2–3 sentence internal rationale naming the single insight." } }))).output_text) as Draft;
   }
-  if (!reviewSubjectOptions(draft.subject_lines || []) || !reviewOutreachBody(draft.body, draft.subject_lines[0]?.subject).valid) throw new Error("The generated outreach did not pass the reply-quality review.");
+  if (!reviewSubjectOptions(draft.subject_lines || [], companyName) || !reviewOutreachBody(draft.body, draft.subject_lines[0]?.subject, companyName).valid) throw new Error("The generated outreach did not pass the reply-quality review.");
   return draft;
 }
