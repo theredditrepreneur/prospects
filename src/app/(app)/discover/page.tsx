@@ -5,7 +5,7 @@ import { getWorkspace } from "@/lib/workspace";
 import { addCompany } from "../workspace-actions";
 import { startDiscovery, updateDiscoveryThreshold } from "./discovery-actions";
 
-export default async function CompanyDiscovery({searchParams}:{searchParams:Promise<{threshold_saved?:string}>}) {
+export default async function CompanyDiscovery({searchParams}:{searchParams:Promise<{threshold_saved?:string;threshold_error?:string}>}) {
   const query=await searchParams;
   const { supabase, organisationId } = await getWorkspace();
   const [{ data: icps }, { data: runs }, { data: organisation }] = await Promise.all([
@@ -16,6 +16,7 @@ export default async function CompanyDiscovery({searchParams}:{searchParams:Prom
   return <>
     <PageHeader eyebrow="Buyer Discovery" title="Find Companies Worth Talking To" description="Refresh your Opportunity Feed with companies showing credible Community Intelligence buying signals." />
     {query.threshold_saved&&<div className="mb-5 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-bold text-green-900">Opportunity threshold saved at {query.threshold_saved}.</div>}
+    {query.threshold_error&&<div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-bold text-red-900">Threshold was not saved: {query.threshold_error}.</div>}
     <div className="grid gap-6 lg:grid-cols-2">
       <section className="card p-6">
         <h2 className="text-xl font-extrabold">Discover potential buyers</h2>
