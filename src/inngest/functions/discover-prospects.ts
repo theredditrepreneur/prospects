@@ -9,7 +9,7 @@ export const discoverProspects = inngest.createFunction(
   { id: "discover-prospects", retries: 3, triggers: { event: "prospects/discovery.requested" } },
   async ({ event, step }) => {
     const { runId, icpId, organisationId, limit } = event.data as { runId: string; icpId: string; organisationId: string; limit: number };
-    if (!runId || !icpId || !organisationId) throw new Error("Start Company Discovery from the Prospect Intelligence OS so the ICP and organisation are supplied.");
+    if (!runId || !icpId || !organisationId) throw new Error("Start Discovery from the Prospect Discovery Engine so the profile and organisation are supplied.");
     const admin = createSupabaseAdminClient();
     const updateRun = (values: Record<string, unknown>) => admin.from("discovery_runs").update(values).eq("id", runId);
     await step.run("mark-running", () => updateRun({ status: "running", progress: 5, current_step: "Loading your ICP…", started_at: new Date().toISOString() }));

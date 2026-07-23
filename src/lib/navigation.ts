@@ -1,2 +1,2 @@
-import { LayoutDashboard,Search,Building2,Brain,Send,Columns3,ChartNoAxesCombined,Target,Users,Settings } from "lucide-react";
-export const navigation=[["Overview","/dashboard",LayoutDashboard],["Company Discovery","/discover",Search],["Prospects","/prospects",Building2],["Intelligence","/intelligence",Brain],["Outreach","/outreach",Send],["Pipeline","/pipeline",Columns3],["Analytics","/analytics",ChartNoAxesCombined],["ICPs","/icps",Target],["Team","/team",Users],["Settings","/settings",Settings]] as const;
+import { Compass, Search, Star, Target, Settings } from "lucide-react";
+export const navigation=[["Opportunity Feed","/dashboard",Compass],["Discover","/discover",Search],["My Prospect List","/prospects",Star],["Discovery Profiles","/icps",Target],["Settings","/settings",Settings]] as const;

@@ -10,6 +10,6 @@ export function Brand() {
       priority
       className="h-auto w-full"
     />
-    <div className="mt-1 text-center text-xs font-bold text-[#667085]">Prospect Intelligence OS</div>
+    <div className="mt-1 text-center text-xs font-bold text-[#667085]">Prospect Discovery Engine</div>
   </div>;
 }

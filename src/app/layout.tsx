@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "The Redditrepreneur Prospect Intelligence OS", template: "%s | The Redditrepreneur" },
+  title: { default: "The Redditrepreneur Prospect Discovery Engine", template: "%s | The Redditrepreneur" },
   description: "The Redditrepreneur private prospect intelligence and revenue operating system.",
   icons: { icon: "/icon.png", apple: "/apple-icon.png" },
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false, noimageindex: true } },

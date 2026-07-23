@@ -13,12 +13,12 @@ export default async function CompanyDiscovery() {
     supabase.from("organisations").select("discovery_match_threshold").eq("id", organisationId).single(),
   ]);
   return <>
-    <PageHeader eyebrow="Company Discovery" title="Company Discovery" description="Discover businesses that match your ideal customer profiles." />
+    <PageHeader eyebrow="Buyer Discovery" title="Find Companies Worth Talking To" description="Refresh your Opportunity Feed with companies showing credible Community Intelligence buying signals." />
     <div className="grid gap-6 lg:grid-cols-2">
       <section className="card p-6">
         <h2 className="text-xl font-extrabold">Discover potential buyers</h2>
         {icps?.length ? <form action={startDiscovery}>
-          <label className="mt-5 block text-sm font-bold">Ideal customer profile<select name="icp_id" className="mt-2" required>{icps.map(icp => <option value={icp.id} key={icp.id}>{icp.name}</option>)}</select></label>
+          <label className="mt-5 block text-sm font-bold">Discovery profile<select name="icp_id" className="mt-2" required>{icps.map(icp => <option value={icp.id} key={icp.id}>{icp.name}</option>)}</select></label>
           <label className="mt-4 block text-sm font-bold">Maximum qualified companies<select name="limit" className="mt-2" defaultValue="20"><option value="10">10</option><option value="20">20 (recommended)</option><option value="50">50</option></select></label>
           <div className="mt-5 [&>button]:w-full"><SubmitButton idle="Discover companies" pending="Starting discovery…" /></div>
         </form> : <div className="mt-5 rounded-xl border border-orange-200 bg-orange-50 p-4"><h3 className="font-extrabold">Create an ICP first</h3><p className="mt-1 text-sm text-[#667085]">Define the companies and signals you want to target.</p><Link href="/icps/new" className="button mt-4">Create ICP</Link></div>}
