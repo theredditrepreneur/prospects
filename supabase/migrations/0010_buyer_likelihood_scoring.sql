@@ -1,0 +1,17 @@
+alter table public.prospect_scores add column if not exists buyer_intent_score integer check (buyer_intent_score between 0 and 25);
+alter table public.prospect_scores add column if not exists community_need_score integer check (community_need_score between 0 and 20);
+alter table public.prospect_scores add column if not exists community_footprint_score integer check (community_footprint_score between 0 and 15);
+alter table public.prospect_scores add column if not exists marketing_maturity_score integer check (marketing_maturity_score between 0 and 10);
+alter table public.prospect_scores add column if not exists budget_ability_score integer check (budget_ability_score between 0 and 10);
+alter table public.prospect_scores add column if not exists competitive_pressure_score integer check (competitive_pressure_score between 0 and 10);
+alter table public.prospect_scores add column if not exists ai_search_importance_score integer check (ai_search_importance_score between 0 and 5);
+alter table public.prospect_scores add column if not exists immediate_buying_signals_score integer check (immediate_buying_signals_score between 0 and 5);
+alter table public.prospect_scores add column if not exists confidence_penalty integer not null default 0 check (confidence_penalty between 0 and 15);
+alter table public.prospect_scores add column if not exists category_evidence jsonb not null default '{}'::jsonb;
+alter table public.prospect_scores add column if not exists buying_questions jsonb not null default '{}'::jsonb;
+alter table public.prospect_scores add column if not exists why_they_would_buy text;
+alter table public.prospect_scores add column if not exists expected_outcome text;
+alter table public.prospect_scores add column if not exists likely_champion text;
+alter table public.prospect_scores add column if not exists buy_now_trigger text;
+alter table public.prospect_scores add column if not exists likely_objections jsonb not null default '[]'::jsonb;
+create unique index if not exists one_prospect_score_per_company on public.prospect_scores(company_id);
